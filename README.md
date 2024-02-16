@@ -15,7 +15,7 @@ docker compose up -d
 
 2. http://localhost:1236/docs/ にアクセス
 
-![image](https://github.com/tsutomu-nagano/estat-sac/assets/59475213/b329031f-4946-4b81-8592-d0330ab88f21)
+![image](https://github.com/tsutomu-nagano/estat-RAPIDS/assets/59475213/090c3622-da1a-44f5-a537-c57fcc3db5b0)
 
 ## 備考
 
@@ -30,3 +30,7 @@ docker compose up -d
 
 1. 日付（yyyymmdd）で指定してデータを取得できる
 2. 今のところは全都道府県の市、区、町、村のデータのみ
+
+## その他
+- renderにもデプロイしてます
+- 🌐 https://estat-rapids.onrender.com/docs
