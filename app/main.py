@@ -6,20 +6,30 @@ from fastapi.responses import StreamingResponse, PlainTextResponse, FileResponse
 from fastapi.encoders import jsonable_encoder
 
 from pathlib import Path
+import tempfile
+import re
+import csv
 
 import requests
+import fitz
+import pandas as pd
+
 
 tags_metadata = [
     {
         "name": "sac",
         "description": "標準地域の機能"
     },
+    {
+        "name": "catalog",
+        "description": "統計の一覧等の機能"
+    }
 
 ]
 
 
 app = FastAPI(
-    title="e-Stat RAPID",
+    title="e-Stat RAPIDS",
     description="e-Statのリソースを取得するAPI",
     version="0.0.1",
     openapi_tags=tags_metadata
@@ -42,6 +52,115 @@ def get_simple_csv(search_date: str):
 
     res = requests.get(url)
 
-    print(res)
-
     return StreamingResponse(iter([res.content]), media_type="text/csv; charset=utf-8-sig")
+
+
+
+
+@app.get("/statlist.csv", tags = ["catalog"], response_class=StreamingResponse)
+def get_statlist_csv(): 
+
+    domains = [
+        "防衛省",
+        "総務省",
+        "環境省",
+        "内閣府",
+        "内閣官房",
+        "人事院",
+        "国土交通省",
+        "中小企業庁",
+        "資源エネルギー庁",
+        "経済産業省",
+        "農林水産省",
+        "林野庁",
+        "こども家庭庁",
+        "厚生労働省",
+        "海上保安庁",
+        "観光庁",
+        "特許庁",
+        "水産庁",
+        "文部科学省",
+        "国税庁",
+        "財務省",
+        "消防庁",
+        "法務省",
+        "中央労働委員会",
+        "公害等調整委員会",
+        "文化庁",
+        "外務省",
+        "個人情報保護委員会",
+        "警察庁",
+        "公正取引委員会",
+        "消費者庁",
+        "スポーツ庁"
+    ]
+
+    statkinds = [
+        "一般統計業務統計",
+        "基幹統計・加工統計",
+        "基幹統計",
+        "一般統計",
+        "業務統計",
+        "加工統計",
+        "その他"
+    ]
+
+
+    domain_ptn = f"({'|'.join(domains)})"
+    statkind_ptn = f"({'|'.join(statkinds)})"
+
+
+    url = "https://www.e-stat.go.jp/estat/html/tokei_itiran.pdf"
+
+    res = requests.get(url)
+
+    with  tempfile.NamedTemporaryFile(dir = "/code/app", suffix=".csv") as tf:
+        with open (tf.name,mode = "wb") as f:
+            f.write(res.content)
+
+        doc = fitz.open(tf.name)
+
+        datas = []
+        for page in doc:
+
+            text = page.get_text("text")
+            text = re.sub("([0-9]{8})", "\r\n\\1", text)
+
+            for t in re.split("\r\n", text):
+                values = t.split("\n")
+
+                statcode = values[0]
+
+                s = re.sub(f"{domain_ptn}+" ,"\\1", "".join(values[1:]))
+
+                if not re.match("^(政府統計)?コード",s):
+
+                    values = re.split(domain_ptn, s)
+                    values = [v  for index, v in enumerate(values) if v.strip() != ""]
+
+                    if re.match(domain_ptn, values[0]):
+                        temp = values[0] + values[1]
+                        values = [temp] + values[2:]
+
+                    statname = values[0]
+                    organization = values[1]
+
+                    # data = values[2]
+                    # values = re.split(statkind_ptn, data)
+                    # contact = values[0]
+                    # statkind = values[1]
+
+                    datas.append({
+                        "statcode": statcode,
+                        "statname": statname,
+                        "organization": organization
+                        # "contact": contact,
+                        # "data": data
+                        })
+
+
+        df = pd.DataFrame(datas)
+        df = df[df["statcode"].str.match("[0-9]{8}")]
+
+        return StreamingResponse(iter([df.to_csv(index = False, quoting=csv.QUOTE_ALL)]), media_type="text/csv; charset=utf-8-sig")
+
