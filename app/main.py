@@ -28,17 +28,13 @@ app = FastAPI(
 
 
 @app.get("/simple.csv", tags = ["sac"], response_class=StreamingResponse)
-def sac_to_csv(search_date: str): 
+def get_simple_csv(search_date: str): 
 
     destFileName = f"sac_{search_date}.csv"
 
     yyyy = int(search_date[0:4])
     mm = int(search_date[4:6])
     dd = int(search_date[6:8])
-
-    print(yyyy)
-    print(mm)
-    print(dd)
 
     # page = 1
 

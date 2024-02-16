@@ -4,8 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: estat-sac:py39
-    container_name: estat-sac-dev
+    image: estat-rapids:py39
+    container_name: estat-rapids-dev
 
     stdin_open: true
     tty: true
