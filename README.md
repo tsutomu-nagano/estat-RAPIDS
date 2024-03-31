@@ -8,15 +8,14 @@
 
 1. docker composeでコンテナ起動
 
-``` shell
-cd estat-RAPID
-docker compose up -d
-```
+    ``` shell
+    cd estat-RAPIDS
+    docker compose up -d
+    ```
 
-2. http://localhost:1236/docs/ にアクセス
+2. <http://localhost:1236/docs/> にアクセス
 
-![image](https://github.com/tsutomu-nagano/estat-RAPIDS/assets/59475213/090c3622-da1a-44f5-a537-c57fcc3db5b0)
-
+    ![image](https://github.com/tsutomu-nagano/estat-RAPIDS/assets/59475213/090c3622-da1a-44f5-a537-c57fcc3db5b0)
 
 ## 機能
 
@@ -31,15 +30,14 @@ docker compose up -d
 - 備考
   - 市区町村の一覧はダウンロード用のURLのパスクエリーで取得されるデータがかわるので、APIのスキーマをそのパスクエリ―にあてはめればよいが確認するのがめんどい
 
-
 ### :clipboard:  統計の一覧等に関する機能
 
 - e-Statの お問い合わせ > お問い合わせ先一覧 のPDFから取得できるデータを扱う
 
 1. 政府統計コード、政府統計名、府省名を取得できる
 
-
 ## その他
+
 - renderにもデプロイしてます
-- 🌐 https://estat-rapids.onrender.com/docs
+- 🌐 <https://estat-rapids.onrender.com/docs>
 - 無料枠なので動かない場合あるかも・・・ 😭

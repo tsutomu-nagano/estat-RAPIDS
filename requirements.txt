@@ -3,5 +3,6 @@ pydantic
 uvicorn
 python-multipart
 requests
-pymupdf
+PyMuPDF
 pandas
+

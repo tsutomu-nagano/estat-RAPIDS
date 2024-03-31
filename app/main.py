@@ -164,3 +164,8 @@ def get_statlist_csv():
 
         return StreamingResponse(iter([df.to_csv(index = False, quoting=csv.QUOTE_ALL)]), media_type="text/csv; charset=utf-8-sig")
 
+
+@app.get("/statdata.csv", tags = ["search"], response_class=JSONResponse)
+def get_statdata():
+
+    return JSONResponse({"TEST": "HOGE"}) 
