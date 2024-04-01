@@ -1,0 +1,26 @@
+name: Daily Job
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 毎日0時に実行
+
+jobs:
+  run-job:
+    name: Run Daily Job
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9' 
+          cache: 'pip' # caching pip dependencies
+      - run: pip install -r requirements.txt
+      - run: python app/create_estat_data.py app/resource
+      # - name: Commit and Push
+      #   run: |
+      #     git config --global user.email "actions@github.com"
+      #     git config --global user.name "GitHub Actions"
+      #     git add .
+      #     git commit -m "Automated commit by GitHub Actions"
+      #     git push
+      #     # ここに実行したい処理のステップを追加してください
