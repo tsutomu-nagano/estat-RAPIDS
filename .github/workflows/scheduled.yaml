@@ -16,13 +16,17 @@ jobs:
           cache: 'pip' # caching pip dependencies
       - run: pip install -r requirements.txt
       - run: python app/create_estat_data.py "00200561" "${{ secrets.APPID }}" "app/resource"
-      - name: 差分を push
+  
+      - name: Commit changes
         run: |
-          git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          if (git diff --shortstat | grep '[0-9]'); then \
-            git add .; \
-            git commit -m "Daily Job Get Data Commit !!"; \
-            git push origin HEAD:${GITHUB_REF}; \
-          fi
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add app/resource
+          git commit -m "resource update [bot] "
+  
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main      
+      
