@@ -1,6 +1,7 @@
 name: Daily Job
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "0 0 * * *" # 毎日0時に実行
 
